@@ -1,0 +1,16 @@
+.home-main-container {
+    width: 100%;
+    display: flex;
+}
+
+.current-picks-section {
+    width: 30%;
+}
+
+.search-section {
+    width: 40%;
+}
+
+.custom-input-section {
+    width: 30%;
+}
