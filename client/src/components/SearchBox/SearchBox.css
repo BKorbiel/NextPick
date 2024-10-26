@@ -18,22 +18,41 @@
 	border: 2px solid black;
 	border-radius: 10px;
 	font-size: 20px;
+	opacity: 0.6;
 }
 .search-box:focus {
-	padding-top: 0px;
-	padding-bottom: 0px;
-	border: 3px solid black;
 	outline: none;
+	opacity: 0.8;
 }
 .search-box::placeholder {
 	color: black;
     opacity: 0.4;
 }
 .search-options {
+	width: 70%;
 	margin-top: 5px;
 	color: white;
 	font-size: 15px;
+	display: flex;
 }
 .checkbox-label {
 	margin-left: 25px;
+}
+.search-button {
+	border-radius: 4px;
+	border: 1px solid #012a3f;
+	padding: 10px;
+	height: 30px;
+	margin-left: auto;
+    display: flex;
+	text-align: center;
+	align-items: center;
+	font-size: 15px;
+	background-color: #134980;
+	color: #66CCFF;
+	opacity: 0.7;
+}
+.search-button:hover {
+	cursor: pointer;
+	opacity: 0.9;
 }
