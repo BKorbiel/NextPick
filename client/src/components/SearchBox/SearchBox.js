@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './SearchBox.css'
 
-function SearchBox() {
+function SearchBox({handleSearch}) {
     const [searchParams, setSearchParams] = useState({
         query: "",
         movies: true,
@@ -16,8 +16,13 @@ function SearchBox() {
         }));
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        handleSearch(searchParams);
+    }
+
     return (
-        <form class="searchbox-container"> 
+        <form className="searchbox-container" onSubmit={(e) => handleSubmit(e)}> 
             <input 
                 className='search-box' 
                 placeholder="Enter book or movie title..."
@@ -27,12 +32,13 @@ function SearchBox() {
             />
             <div className='search-options'>
                 Search for:
-                <label class="checkbox-label">
+                <label className="checkbox-label">
                     <input type="checkbox" id="movies" value="Movies" checked={searchParams.movies} onChange={handleChange}/> Movies
                 </label>
-                <label class="checkbox-label">
+                <label className="checkbox-label">
                     <input type="checkbox" id="books" value="Books" checked={searchParams.books} onChange={handleChange}/> Books
                 </label>
+                <button className='search-button' onClick={(e) => handleSubmit(e)}>Search</button>
             </div>
         </form>
     );

@@ -1,0 +1,37 @@
+.search-section-main-container {
+    color: lightgray;
+    font-size: 20px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.search-results-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    width: 100%;
+}
+.search-resulsts {
+    width: 100%;
+    max-height: 60vh;
+    overflow: auto;
+}
+.search-resulsts::-webkit-scrollbar {
+    border-radius: 4px;
+    width: 5px;
+}
+.search-resulsts::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background: #A0A0A0; 
+}
+.search-resulsts::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: #505050; 
+}
+.search-resulsts::-webkit-scrollbar-thumb:hover {
+    border-radius: 4px;
+    background: #303030; 
+}
