@@ -3,7 +3,7 @@ import './SearchBox.css'
 
 function SearchBox() {
     const [searchParams, setSearchParams] = useState({
-        searchInput: "",
+        query: "",
         movies: true,
         books: true,
     });
@@ -21,8 +21,8 @@ function SearchBox() {
             <input 
                 className='search-box' 
                 placeholder="Enter book or movie title..."
-                id='searchInput'
-                value={searchParams.searchInput}
+                id='query'
+                value={searchParams.query}
                 onChange={handleChange}
             />
             <div className='search-options'>
