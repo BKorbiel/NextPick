@@ -1,0 +1,8 @@
+flask
+numpy
+pandas
+nltk
+scikit-learn
+joblib
+scipy
+thefuzz

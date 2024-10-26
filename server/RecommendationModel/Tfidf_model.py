@@ -16,18 +16,31 @@ import joblib
 from scipy.sparse import csr_matrix, hstack
 
 class Tfidf:
-    def __init__(self, 
-                 data_filename="RecommendationModel/datasets/raw_data.csv", 
-                 matrix_filename="RecommendationModel/datasets/tfidf_matrix.pkl",
-                 word_dict_filename="RecommendationModel/datasets/word_dict.pkl"):
+    def __init__(self, data_df):
+        self.data_df = data_df
+        self.tfidf_matrix = None
+        self.norms = None
+        self.word_dict = None
+    
+    def load_data(self,
+                  matrix_filename="RecommendationModel/datasets/tfidf_matrix.pkl", 
+                  word_dict_filename="RecommendationModel/datasets/word_dict.pkl"):
         nltk.download('stopwords')
-        self.data_filename = data_filename
-        self.matrix_filename = matrix_filename
-        self.word_dict_filename = word_dict_filename
+
+        tfidf_matrix_with_norms = joblib.load(matrix_filename)
+        if not isinstance(tfidf_matrix_with_norms, csr_matrix):
+            tfidf_matrix_with_norms = tfidf_matrix_with_norms.tocsr()
+        tfidf_matrix = tfidf_matrix_with_norms[:, :-1]
+        norms = tfidf_matrix_with_norms[:, -1].toarray().flatten()
+
+        self.tfidf_matrix = tfidf_matrix
+        self.norms = norms
+        self.word_dict = joblib.load(word_dict_filename)
 
     def get_words_from_text(self, text):
+        text = text.lower()
         stop_words = set(stopwords.words('english'))
-        words = re.findall(r'\b[a-z]+\b', text.lower())
+        words = re.findall(r'\b[a-z]+\b', text)
         words = [word for word in words if word not in stop_words]
         return words
 
@@ -56,10 +69,11 @@ class Tfidf:
         return tfidf
     
     def compute_tfidf_matrix(self):
-        df_data = pd.read_csv(self.data_filename)
-
         # Get the tf-idf data
-        word_lists = [self.get_words_from_text(description) for description in df_data["Description"]]
+        word_lists = [
+            self.get_words_from_text(description + " " + (keywords if pd.notna(keywords) else ""))
+            for description, keywords in zip(self.data_df["Description"], self.data_df["keywords"])
+        ]
         tf_list = [self.compute_tf(word_list) for word_list in word_lists]
         idf = self.compute_idf(word_lists)
         tfidf_list = [self.compute_tfidf(tf, idf) for tf in tf_list]
@@ -67,7 +81,7 @@ class Tfidf:
         # List of unique words
         unique_words = idf.keys()
         word_dict = {word: {'idx': i, 'idf': idf[word]} for i, word in enumerate(unique_words)}
-        joblib.dump(word_dict, self.word_dict_filename)
+        joblib.dump(word_dict, "RecommendationModel/datasets/word_dict.pkl")
 
         # Creating sparse matrix
         data = []
@@ -88,25 +102,13 @@ class Tfidf:
 
         # Save matrix and norms
         tfidf_matrix = hstack([tfidf_matrix_sparse, norms_sparse])
-        joblib.dump(tfidf_matrix, self.matrix_filename)
-
-    def load_data(self, filename):
-        tfidf_matrix_with_norms = joblib.load(filename)
-
-        if not isinstance(tfidf_matrix_with_norms, csr_matrix):
-            tfidf_matrix_with_norms = tfidf_matrix_with_norms.tocsr()
-
-        tfidf_matrix = tfidf_matrix_with_norms[:, :-1]
-        norms = tfidf_matrix_with_norms[:, -1].toarray().flatten()
-
-        return tfidf_matrix, norms
+        joblib.dump(tfidf_matrix, "RecommendationModel/datasets/tfidf_matrix.pkl")
 
     def get_recommendations_by_ids(self, indicies_list, n_top_books=10, n_top_movies=10):
-        tfidf_matrix, norms = self.load_data(self.matrix_filename) 
-        similarity_scores = np.zeros(tfidf_matrix.shape[0])
+        similarity_scores = np.zeros(self.tfidf_matrix.shape[0])
         for idx in indicies_list:
-            vector = tfidf_matrix[idx]
-            similarity_scores += (tfidf_matrix.dot(vector.T)).toarray().flatten() / (norms * norms[idx])
+            vector = self.tfidf_matrix[idx]
+            similarity_scores += (self.tfidf_matrix.dot(vector.T)).toarray().flatten() / (self.norms * self.norms[idx])
 
         similarity_scores = enumerate(similarity_scores)
         similarity_scores = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
@@ -116,10 +118,9 @@ class Tfidf:
     def get_recommendations_by_custom_input(self, input, n_top_books, n_top_movies):
         vector, norm = self.calculate_text_vector(input)
 
-        tfidf_matrix, norms = self.load_data(self.matrix_filename) 
-        similarity_scores = np.zeros(tfidf_matrix.shape[0])
+        similarity_scores = np.zeros(self.tfidf_matrix.shape[0])
 
-        similarity_scores += (tfidf_matrix.dot(vector.T)).toarray().flatten() / (norms * norm)
+        similarity_scores += (self.tfidf_matrix.dot(vector.T)).toarray().flatten() / (self.norms * norm)
 
         similarity_scores = enumerate(similarity_scores)
         similarity_scores = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
@@ -127,28 +128,24 @@ class Tfidf:
         return self.get_recommendations_by_sim_score(similarity_scores, [], n_top_books, n_top_movies)
 
     def calculate_text_vector(self, text):
-        word_dict = joblib.load(self.word_dict_filename)
-
         word_list = self.get_words_from_text(text)
-        filtered_words = [word for word in word_list if word in word_dict]
-        idf_dict = {word: data['idf'] for word, data in word_dict.items()}
+        filtered_words = [word for word in word_list if word in self.word_dict]
+        idf_dict = {word: data['idf'] for word, data in self.word_dict.items()}
 
         tf = self.compute_tf(filtered_words)
         tf_idf = self.compute_tfidf(tf, idf_dict)
         data = []
         col_indices = []
         for word, value in tf_idf.items():
-            col_indices.append(word_dict[word]['idx'])
+            col_indices.append(self.word_dict[word]['idx'])
             data.append(value)
 
-        vector = csr_matrix((data, ([0] * len(col_indices), col_indices)), shape=(1, len(word_dict)))
+        vector = csr_matrix((data, ([0] * len(col_indices), col_indices)), shape=(1, len(self.word_dict)))
         norm = np.sqrt(np.sum(vector.data ** 2))
 
         return vector, norm
 
     def get_recommendations_by_sim_score(self, similarity_scores, indicies_list, n_top_books, n_top_movies):
-        df_data = pd.read_csv(self.data_filename)
-
         books = []
         movies = []
         idx = 0
@@ -157,9 +154,9 @@ class Tfidf:
             if elem[0] in indicies_list:
                 idx += 1
                 continue
-            if len(books) < n_top_books and df_data.loc[elem[0], 'Type'] == "Book":
+            if len(books) < n_top_books and self.data_df.loc[elem[0], 'Type'] == "Book":
                 books.append(elem[0])
-            if len(movies) < n_top_movies and df_data.loc[elem[0], 'Type'] == "Movie":
+            if len(movies) < n_top_movies and self.data_df.loc[elem[0], 'Type'] == "Movie":
                 movies.append(elem[0])
             idx += 1
 
