@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 import pandas as pd
 from RecommendationModel.Tfidf_model import Tfidf
-from routes.search import search_route
 from globals import Globals
 from flask_cors import CORS
+from routes.search import search_route
+from routes.recommendations import recommendations_by_ids_route
 
 app = Flask(__name__)
 allowed_origins = [
@@ -23,6 +24,7 @@ with app.app_context():
     load_data_and_model()
 
 app.register_blueprint(search_route)
+app.register_blueprint(recommendations_by_ids_route)
 
 if __name__ == "__main__":
     app.run(debug=True)

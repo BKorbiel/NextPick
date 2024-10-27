@@ -25,11 +25,14 @@ df_books = df_books[['Title', 'description', 'average_rating', 'thumbnail', 'add
 df_books['Type'] = "Book"
 
 # Concat dataframes
-df_combined = pd.concat([df_movies, df_books], ignore_index=True)
+df_combined = pd.concat([df_movies, df_books], ignore_index=False)
 df_combined = df_combined.dropna(subset=['Title', 'Description'])
 
 # Sort by popularity
 df_combined = df_combined.sort_values(by='vote_count', ascending=False)
+
+# ID
+df_combined = df_combined.reset_index(drop=True)
 
 # Save
 df_combined.to_csv('RecommendationModel/datasets/raw_data.csv')
