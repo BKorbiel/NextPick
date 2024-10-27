@@ -8,6 +8,9 @@
 }
 
 .search-section {
+    font-size: 18px;
+    color: darkred;
+    text-align: center;
     width: 40%;
 }
 

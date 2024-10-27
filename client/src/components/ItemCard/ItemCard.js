@@ -32,6 +32,7 @@ const ItemCard = ({params, onClick, type}) => {
             </div>
             {type === itemType.SEARCH_RESULT_NOT_SELECTED && <div className={"overlay-add"}>Click to add</div>}
             {type === itemType.SEARCH_RESULT_ALREADY_SELECTED && <div className={"overlay-already-added"}>Item already selected</div>}
+            {type === itemType.CURRENT_PICK && <div className={"overlay-current-pick"}>Click to remove</div>}
         </div>
     )
 }

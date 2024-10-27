@@ -51,6 +51,7 @@
 	background-color: #134980;
 	color: #66CCFF;
 	opacity: 0.7;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3)
 }
 .search-button:hover {
 	cursor: pointer;

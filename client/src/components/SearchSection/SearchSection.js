@@ -53,6 +53,7 @@ const SearchSection = ({selectedItems, onSelectItem}) => {
             <br/>
             Search for books or movies and select up to twenty of them, and I'll recommend your next pick.
             <div className='search-results-container'>
+            {!hasSearched && !loading && <><br/><br/><br/>You can also use the custom input on the right to enter keywords or describe your ideal movie or book, and I’ll recommend something for you.</>}
             {loading ? 
                 <LoadingSpinner/>
                 :
