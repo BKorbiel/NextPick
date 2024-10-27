@@ -1,4 +1,5 @@
 .item-card-main-container {
+    text-align: left;
     margin-top: 5px;
     position: relative;
     width: 99%;
@@ -64,6 +65,26 @@
     transition: opacity 0.3s ease;
     border-radius: 0 16px 16px 0;
 }
+.overlay-current-pick {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 0, 0, 0.13);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 0 16px 16px 0;
+}
+.overlay-current-pick:hover {
+    cursor: pointer;
+}
 .item-card-title {
     max-width: 100%;
     font-size: 20px;
@@ -75,5 +96,8 @@
     opacity: 1;
 }
 .item-card-main-container:hover .overlay-already-added {
+    opacity: 1;
+}
+.item-card-main-container:hover .overlay-current-pick {
     opacity: 1;
 }

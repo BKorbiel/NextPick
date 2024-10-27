@@ -4,12 +4,15 @@ import { useState } from 'react';
 
 const App =() => {
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [selectedItemIDs, setSelectedItemIDs] = useState([]);
 
   const handleShowRecommendationsByInput = () => {
     setShowRecommendations(true);
   }
 
-  const handleShowRecommendationsByPositions = () => {
+  const handleShowRecommendationsBySelectedItems = (selectedItems) => {
+    const selectedItemIds = [selectedItems.map((item, idx) => item.ID)]
+    setSelectedItemIDs(selectedItemIds);
     setShowRecommendations(true);
   }
 	
@@ -20,7 +23,7 @@ const App =() => {
         null
         :
         <div className='home'>
-            <Home/>
+            <Home onShowRecommendationsBySelectedItems={handleShowRecommendationsBySelectedItems}/>
         </div>
       }
     </div>
