@@ -11,20 +11,13 @@ const App =() => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleShowRecommendationsByInput = () => {
-    setShowRecommendations(true);
-  }
-
-  const handleShowRecommendationsBySelectedItems = async (selectedItems) => {
+  const getRecommendations = async(url, params) => {
     setShowRecommendations(true);
     setLoading(true);
-    const selectedItemIds = selectedItems.map((item, idx) => item.ID)
     
     try {
-        const response = await axios.get(`${API_BASE_URL}/recommendations/by-ids`, {
-            params: {
-              ids: selectedItemIds.join(",")
-          }
+        const response = await axios.get(url, {
+            params: params
         });
         setRecommendations(response.data);
     } catch (err) {
@@ -33,6 +26,19 @@ const App =() => {
     } finally {
         setLoading(false);
     }
+  }
+  
+  const handleShowRecommendationsByInput = (text) => {
+    const url = `${API_BASE_URL}/recommendations/by-input`;
+    const params = {input: text};
+    getRecommendations(url, params);
+  }
+
+  const handleShowRecommendationsBySelectedItems = async (selectedItems) => {
+    const url = `${API_BASE_URL}/recommendations/by-ids`;
+    const selectedItemIds = selectedItems.map((item, idx) => item.ID)
+    const params = {ids: selectedItemIds.join(",")};
+    getRecommendations(url, params);
   }
 	
   const handleReturnToHomePage = () => {
@@ -56,7 +62,10 @@ const App =() => {
         </div>
         :
         <div className='home'>
-          <Home onShowRecommendationsBySelectedItems={handleShowRecommendationsBySelectedItems}/>
+          <Home 
+            onShowRecommendationsBySelectedItems={handleShowRecommendationsBySelectedItems}
+            onShowRecommendationsByCustomInput={handleShowRecommendationsByInput}
+          />
         </div>
       }
     </div>

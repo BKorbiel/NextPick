@@ -6,8 +6,9 @@ df_books = pd.read_csv("RecommendationModel/datasets/abdallahwagih/books-dataset
 
 # Movies DF
 df_movies['keywords'] = df_movies['keywords'].apply(lambda x: ' '.join([d['name'] for d in json.loads(x)]))
+df_movies['categories'] = df_movies['genres'].apply(lambda x: ' '.join([d['name'] for d in json.loads(x)]))
 df_movies['additional_info'] = df_movies["release_date"]
-df_movies = df_movies[['original_title','overview', 'vote_average', 'thumbnail', 'additional_info', 'keywords', 'vote_count']].rename(
+df_movies = df_movies[['original_title','overview', 'vote_average', 'thumbnail', 'additional_info', 'keywords', 'vote_count', 'categories']].rename(
     columns={'original_title': 'Title', 'overview': 'Description', 'vote_average': 'Rating'}
 )
 df_movies['Type'] = "Movie"
@@ -19,7 +20,7 @@ df_books["Title"] = df_books.apply(
     axis=1
 )
 df_books["additional_info"] = df_books["authors"]
-df_books = df_books[['Title', 'description', 'average_rating', 'thumbnail', 'additional_info', 'keywords', 'ratings_count']].rename(
+df_books = df_books[['Title', 'description', 'average_rating', 'thumbnail', 'additional_info', 'keywords', 'ratings_count', 'categories']].rename(
     columns={'description': 'Description', 'average_rating': 'Rating', 'ratings_count': 'vote_count'}
 )
 df_books['Type'] = "Book"

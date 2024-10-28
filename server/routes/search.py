@@ -7,12 +7,12 @@ search_route = Blueprint('search', __name__)
 
 SIMILARITY_THRESHOLD = 80
 
-def fuzzy_search(title, query_words):
-    title_lower = str(title).lower()
+def fuzzy_search(text, query_words):
+    text_lower = str(text).lower()
     for query_word in query_words:
-        title_words = title_lower.split()
-        if not any(fuzz.ratio(query_word, title_word) > SIMILARITY_THRESHOLD 
-                  for title_word in title_words):
+        text_words = text_lower.split()
+        if not any(fuzz.ratio(query_word, text_word) > SIMILARITY_THRESHOLD 
+                  for text_word in text_words):
             return False
     return True
 
@@ -26,11 +26,14 @@ def search():
     query_words = query_lower.split()
 
     try:
-        filtered_df = Globals.data_df[
-            Globals.data_df['Title'].apply(lambda x: fuzzy_search(x, query_words)) &
-            ((include_books & (Globals.data_df['Type'] == 'Book')) |
-            (include_movies & (Globals.data_df['Type'] == 'Movie')))
-        ].head(100)
+        fuzzy_filter = Globals.data_df.apply(
+            lambda row: fuzzy_search(row['Title'] + " " + 
+                                     (row['additional_info'] if pd.notna(row['additional_info']) else ""), 
+            query_words), 
+            axis=1)
+        type_filter = (include_books & (Globals.data_df['Type'] == 'Book')) | (include_movies & (Globals.data_df['Type'] == 'Movie'))
+
+        filtered_df = Globals.data_df[fuzzy_filter & type_filter].head(100)
 
         filtered_df.drop(columns="keywords", inplace=True)
         filtered_df.columns.values[0] = 'ID'
@@ -38,6 +41,7 @@ def search():
         result = [{k: (v if pd.notna(v) else None) for k, v in item.items()} for item in result]
     
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
     return jsonify(result)
