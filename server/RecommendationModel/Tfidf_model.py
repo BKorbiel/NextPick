@@ -71,8 +71,14 @@ class Tfidf:
     def compute_tfidf_matrix(self):
         # Get the tf-idf data
         word_lists = [
-            self.get_words_from_text(description + " " + (keywords if pd.notna(keywords) else ""))
-            for description, keywords in zip(self.data_df["Description"], self.data_df["keywords"])
+            self.get_words_from_text(description + " " + 
+                                     (keywords if pd.notna(keywords) else "") + " " + 
+                                     (info if pd.notna(info) else "") + " " +
+                                     (categories if pd.notna(categories) else "")
+
+            )
+            for description, keywords, info, categories in 
+            zip(self.data_df["Description"], self.data_df["keywords"], self.data_df["additional_info"], self.data_df['categories'])
         ]
         tf_list = [self.compute_tf(word_list) for word_list in word_lists]
         idf = self.compute_idf(word_lists)

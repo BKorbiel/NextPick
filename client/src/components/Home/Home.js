@@ -2,8 +2,9 @@ import React, {useEffect, useState} from 'react';
 import SearchSection from '../SearchSection/SearchSection';
 import './Home.css'
 import CurrentSelections from '../CurrentSelections/CurrentSelections';
+import CustomInputSection from '../CustomInputSection/CustomInputSection';
 
-const Home = ({onShowRecommendationsBySelectedItems}) => {
+const Home = ({onShowRecommendationsBySelectedItems, onShowRecommendationsByCustomInput}) => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [limitReached, setLimitReached] = useState(false);
 
@@ -42,7 +43,7 @@ const Home = ({onShowRecommendationsBySelectedItems}) => {
                 <SearchSection onSelectItem={handleSelectItem} selectedItems={selectedItems}/>
             </div>
             <div className='custom-input-section'>
-
+                <CustomInputSection onSubmit={onShowRecommendationsByCustomInput}/>
             </div>
         </div>
     )

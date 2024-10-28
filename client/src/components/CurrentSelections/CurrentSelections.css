@@ -41,7 +41,7 @@
     color:#66CCFF;
     font-size: 25px;
     background-color:#1E3A8A;
-    border-radius: 16px;
+    border-radius: 12px;
     opacity: 0.7;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3)
 }
@@ -52,4 +52,11 @@
 .wrong-click-notification {
     color: red;
     font-size: 15px;
+}
+.current-picks-empty-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
 }

@@ -18,17 +18,17 @@ const CurrentSelections = ({selectedItems, onRemoveItem, onShowRecommendations})
             Current picks:
             <div className='current-picks-container'>
                 {selectedItems.length ?
-                selectedItems.map((item, idx) => (
-                    <ItemCard 
-                        params={item} 
-                        key={idx}
-                        onClick={onRemoveItem} 
-                        type={itemType.CURRENT_PICK}
-                    />
-                ))
-                :
-                "You didn't add any item yet."
-            }
+                    selectedItems.map((item, idx) => (
+                        <ItemCard 
+                            params={item} 
+                            key={idx}
+                            onClick={onRemoveItem} 
+                            type={itemType.CURRENT_PICK}
+                        />
+                    ))
+                    :
+                    <div className='current-picks-empty-label'>You didn't add any item yet.</div>
+                }
             </div>
             <div className='show-recommendations-button' onClick={handleClick}>
                 Show Recommendations
