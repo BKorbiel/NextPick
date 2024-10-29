@@ -4,7 +4,7 @@ Live demo available [here](https://the-next-pick.web.app/)
 ## Table of Contents
 * [General Info](#general-information)
 * [Recommendation Model](#recommendation-model)
-* [Technologies & Tools Used](#technologies-&-tools-used)
+* [Technologies & Tools Used](#technologies--tools-used)
 
 ## General Information
 NextPick is a book and movie recommendation system. There are two ways to get recommendations: users can select up to 20 of their favorite books and movies, and the system will suggest the next pick based on description similarity. Alternatively, users can enter a custom input with keywords or a description of their ideal book or movie, and the system will generate a recommendation.
